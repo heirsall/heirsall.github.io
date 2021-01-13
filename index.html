@@ -1,0 +1,144 @@
+<html>
+<head>
+    <!-- libraries -->
+    <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-physics-system@v4.0.1/dist/aframe-physics-system.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+
+    <!-- database dependencies -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+
+    <!-- custom scripts -->
+    <script src="scripts/bulletCollision.js"></script>
+    <script src="scripts/score.js"></script>
+    <script src="scripts/timer.js"></script>
+    <script src="scripts/animalAnimation.js"></script>
+    <script src="scripts/positionRandomizer.js"></script>
+    <script src="scripts/animalGenerator.js"></script>
+    <script src="scripts/gameoverText.js"></script>
+    <script src="scripts/resetGame.js"></script>
+    <script src="scripts/onKeyDown.js"></script>
+
+    <!-- data from firebase -->
+    <script src="scripts/firebaseDatabase.js"></script>
+
+    <!-- local global variables -->
+    <script src="scripts/global.js"></script>
+
+</head>
+<body>
+
+    <a-scene id="mainScene" physics="gravity: -9.8;" background="color: black" environment="preset: egypt; skyColor:  #198575; ground: flat;">
+
+        <!-- assets -->
+        <a-assets>
+            <!-- animals -->
+            <a-asset-item id="deer" src="assets/alienboss/scene.gltf"></a-asset-item>
+            <!-- <a-asset-item id="horse" src="assets/alienboss/scene.gltf"></a-asset-item>
+            <a-asset-item id="tiger" src="assets/alienboss/scene.gltf"></a-asset-item>-->
+            <a-asset-item id="bear" src="assets/alienboss/scene.gltf"></a-asset-item> 
+            <a-asset-item id="elephant" src="assets/alienboss/scene.gltf"></a-asset-item>
+            
+            <!-- weapons -->
+            <a-asset-item id="gun" src="assets/gun2/scene.gltf"></a-asset-item>
+            <a-asset-item id="bullet-obj" src="assets/bullet/50_Barrett.obj"></a-asset-item>
+            <a-asset-item id="bullet-mtl" src="assets/bullet/50_Barrett.mtl"></a-asset-item>
+
+            <!-- other assets -->
+            <a-asset-item id="house" src="assets/house/house.gltf"></a-asset-item>
+        </a-assets>
+        
+        <!-- camera -->
+        <a-entity id="rig" class="player" rotation="0 270 0" position="-24 1.6 10" movement-controls="speed: 0.5">
+            <a-entity id="mainCamera" camera look-controls>
+
+                <!-- cursor -->
+                <a-entity
+                    position="0 0 -1.5"
+                    cursor="fuse: true; fuseTimeout: 500"
+                    geometry="primitive: sphere; radius: 0.01"
+                    material="color: white; shader: flat" 
+                >
+                </a-entity>
+    
+                <!-- gun -->
+                <a-gltf-model static-body id="gun-id" ammo="10" src="#gun" scale="0.005 0.005 0.005" position="0.5 -0.9 -0.9" rotation="0 90 0"></a-gltf-model>
+
+                <!-- bullet -->
+                <a-entity 
+                    static-body
+                    id="bullet-id" 
+                    position="0.45 -0.43 -1" 
+                    scale="0.0005 0.0005 0.0005" 
+                    rotation="0 90 0" 
+                    obj-model="obj: #bullet-obj" 
+                    material="src: #bullet-mtl"
+                    animation="
+                        startEvents: shoot-start;
+                        property: position;
+                        from: 0.45 -0.43 -1;
+                        to: 0 0 -20;
+                        dur: 500;
+                    " 
+                    >
+                </a-entity>
+    
+                <!-- Timer -->
+                <a-text static-body id="timer-id" position="1.4 0.7 -1"  value="05:00" width="3" align="center" shader="flat" color="red"></a-text>
+                
+                <!-- Scoreboard -->   
+                <a-text static-body id="score-id" position="0 0.7 -1" value="0" width="3" align="center" shader="flat"></a-text>
+
+                <!-- Ammo -->   
+                <a-text static-body id="ammo-id" position="1.5 -0.6 -1" value="10" width="3" align="center" shader="flat" color="yellow"></a-text>
+
+            </a-entity>
+        </a-entity>
+
+        <!-- title -->
+        <a-plane id="title" look-at="#mainCamera" position="-21 2.8 10" rotation="0 270 0" opacity="1" color="#f88f01" width="4.3" height="1" shader="flat">
+            <a-text static-body value="ALIEN IN EGYPT" width="10" align="center" shader="flat"></a-text>
+        </a-plane>
+       
+        <!-- instructions -->
+        <a-plane id="instructions" look-at="#mainCamera" position="-21 1.5 10" rotation="0 270 0" opacity="0.1" width="4" height="1.6" shader="flat" color="#CACACA">
+            <a-text static-body width="3" align="center" color="white"
+                value="
+                    Dibuat oleh :
+                    Mochamad Thiesa Nabil
+                    05111740000194
+
+                    Budiman Akbar Radhiansyah
+                    05111740000179
+
+                    Gunakan alat virtual reality untuk pengalaman
+                    yang lebih baik.
+                "
+            ></a-text>
+        </a-plane>
+
+        <!-- game start -->
+        <a-plane id="start" look-at="#mainCamera" position="-21 0.2 10" rotation="0 270 0" opacity="0.2" width="1.5" height="0.5" shader="flat" color="#CACACA">
+            <a-text static-body value="START" width="7" align="center" color="white"></a-plane>
+        </a-plane>
+        
+        <!-- ground  -->
+        <a-plane id="ground" static-body position="0 -0.03 0" rotation="-90 0 0" height="1000" width="1000"></a-plane>
+
+        <!-- border 
+        <a-box id="top" static-body position="-1 0 23" width="50" color="brown" height="4"></a-box>
+        <a-box id="bottom" static-body position="-1 0 -23" width="50" color="brown" height="4"></a-box>
+        <a-box id="right" static-body position="-26 0 0" rotation="0 90 0" width="46" color="brown" height="4"></a-box>
+        <a-box id="left" static-body position="24 0 0" rotation="0 90 0" width="46" color="brown" height="4"></a-box>
+        -->
+
+        <!-- house -->
+        <a-gltf-model static-body="shape: box" src="#house" scale="0.3 0.3 0.3" position="-30 0 15" opacity="0"></a-gltf-model>
+
+    </a-scene>
+
+</body>
+</html>
