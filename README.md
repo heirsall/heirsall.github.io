@@ -7,8 +7,11 @@ Tembak alien sebanyak-banyaknya untuk mendapatkan skor dalam waktu yang terbatas
 
 # Controls
 Move : Keyboard WASD
+
 Aim : Drag mouse kiri untuk mengarahkan senjata
+
 Shoot : Tekan SPACE untuk menembak
+
 Reload : Tekan R untuk mengisi peluru senjata
 
 # How to Play
