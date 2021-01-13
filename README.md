@@ -3,6 +3,13 @@ WebVR alien shooting game made with A-Frame.
 
 Demo Gameplay : https://heirsall.github.io./
 
+## Contributor
+Mochamad Thiesa Nabil
+0511174000194
+
+Budiman Akbar Radhiansyah
+0511174000179
+
 # Alien in Egypt
 Simulasi alien shooting game yang dibuat dengan A-Frame, dibutuhkan alat virtual reality untuk pengalaman yang lebih baik.
 Tembak alien sebanyak-banyaknya untuk mendapatkan skor dalam waktu yang terbatas.
